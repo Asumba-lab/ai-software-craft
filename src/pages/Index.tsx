@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,7 @@ import TheoreticalAnalysis from "@/components/TheoreticalAnalysis";
 import PracticalImplementation from "@/components/PracticalImplementation";
 import EthicalReflection from "@/components/EthicalReflection";
 import SubmissionGuidelines from "@/components/SubmissionGuidelines";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const progress = 25; // Can be made dynamic
@@ -141,14 +141,21 @@ const Index = () => {
               <p className="text-sm text-slate-500">#AISoftwareAssignment</p>
             </div>
             <div className="flex items-center gap-4">
-              <Button variant="outline" size="sm" className="hover:bg-blue-50 hover:border-blue-300">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="hover:bg-blue-50 hover:border-blue-300"
+                onClick={() => window.open('https://github.com', '_blank')}
+              >
                 <Github className="h-4 w-4 mr-2" />
                 GitHub
               </Button>
-              <Button variant="outline" size="sm" className="hover:bg-blue-50 hover:border-blue-300">
-                <Users className="h-4 w-4 mr-2" />
-                Community
-              </Button>
+              <Link to="/community">
+                <Button variant="outline" size="sm" className="hover:bg-blue-50 hover:border-blue-300">
+                  <Users className="h-4 w-4 mr-2" />
+                  Community
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
