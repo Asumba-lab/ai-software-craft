@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Brain, HelpCircle, BookOpen, FileText, CheckCircle2 } from "lucide-react";
+import { Brain, HelpCircle, BookOpen, FileText, CheckCircle2, ExternalLink } from "lucide-react";
 import { useState } from "react";
 
 const TheoreticalAnalysis = () => {
@@ -17,6 +17,29 @@ const TheoreticalAnalysis = () => {
   const handleAnswerChange = (questionId: string, value: string) => {
     setAnswers(prev => ({ ...prev, [questionId]: value }));
   };
+
+  const articles = [
+    {
+      title: "AI in DevOps: Automating Deployment Pipelines",
+      description: "Comprehensive guide on how AI transforms DevOps practices",
+      url: "https://www.redhat.com/en/topics/devops/what-is-aiops"
+    },
+    {
+      title: "Machine Learning for Software Engineering",
+      description: "Research paper on ML applications in software development",
+      url: "https://arxiv.org/abs/1909.11436"
+    },
+    {
+      title: "AIOps: The Future of IT Operations",
+      description: "Industry insights on AI-powered IT operations",
+      url: "https://www.ibm.com/topics/aiops"
+    },
+    {
+      title: "Automated Testing with AI",
+      description: "Best practices for AI-driven testing strategies",
+      url: "https://www.selenium.dev/documentation/test_practices/encouraged/test_automation/"
+    }
+  ];
 
   return (
     <div className="space-y-8">
@@ -128,14 +151,31 @@ const TheoreticalAnalysis = () => {
           <div className="p-4 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg border border-orange-200">
             <div className="flex items-start gap-3">
               <FileText className="h-5 w-5 text-orange-600 flex-shrink-0 mt-1" />
-              <div>
-                <h4 className="font-semibold text-orange-900 mb-2">Required Reading</h4>
-                <p className="text-orange-800 mb-3">
-                  Read the article: "AI in DevOps: Automating Deployment Pipelines"
+              <div className="flex-1">
+                <h4 className="font-semibold text-orange-900 mb-3">Required Reading Materials</h4>
+                <p className="text-orange-800 mb-4">
+                  Access the following articles to complete your case study analysis:
                 </p>
-                <Button variant="outline" size="sm" className="text-orange-700 border-orange-300 hover:bg-orange-50">
-                  Access Article
-                </Button>
+                
+                <div className="grid gap-3">
+                  {articles.map((article, index) => (
+                    <div key={index} className="flex items-center justify-between p-3 bg-white/60 rounded-lg border border-orange-200">
+                      <div className="flex-1">
+                        <h5 className="font-medium text-orange-900 mb-1">{article.title}</h5>
+                        <p className="text-sm text-orange-700">{article.description}</p>
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="text-orange-700 border-orange-300 hover:bg-orange-50 ml-3"
+                        onClick={() => window.open(article.url, '_blank')}
+                      >
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        Access Article
+                      </Button>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -144,11 +184,11 @@ const TheoreticalAnalysis = () => {
             <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
               <h4 className="font-semibold text-slate-900 mb-2">Analysis Question</h4>
               <p className="text-slate-700">
-                How does AIOps improve software deployment efficiency? Provide two examples.
+                How does AIOps improve software deployment efficiency? Provide two examples from the articles above.
               </p>
             </div>
             <Textarea
-              placeholder="Provide your analysis with two specific examples..."
+              placeholder="Provide your analysis with two specific examples from the required reading materials..."
               value={answers.caseStudy}
               onChange={(e) => handleAnswerChange("caseStudy", e.target.value)}
               className="min-h-[150px] bg-white/80 backdrop-blur-sm"
