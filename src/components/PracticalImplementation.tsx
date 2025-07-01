@@ -5,8 +5,54 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Code, Bot, TestTube, BarChart3, Github, Play, Upload, CheckCircle2 } from "lucide-react";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const PracticalImplementation = () => {
+  const [taskProgress, setTaskProgress] = useState({
+    task1: { manualCode: false, aiCode: false },
+    task2: { testScript: false },
+    task3: { notebook: false }
+  });
+
+  const { toast } = useToast();
+
+  const handleFileUpload = (taskId: string, fileType: string) => {
+    // Simulate file upload
+    setTaskProgress(prev => ({
+      ...prev,
+      [taskId]: { ...prev[taskId], [fileType]: true }
+    }));
+    
+    toast({
+      title: "File Uploaded Successfully",
+      description: `Your ${fileType} has been uploaded and saved.`,
+    });
+  };
+
+  const handleRunTests = () => {
+    toast({
+      title: "Test Suite Started",
+      description: "Running automated tests... Results will be displayed shortly.",
+    });
+    
+    // Simulate test execution
+    setTimeout(() => {
+      toast({
+        title: "Tests Completed",
+        description: "Login tests completed with 95% success rate.",
+      });
+    }, 3000);
+  };
+
+  const handleGithubUpload = () => {
+    window.open('https://github.com/new', '_blank');
+    toast({
+      title: "GitHub Repository",
+      description: "Opening GitHub to create a new repository for your code.",
+    });
+  };
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -74,26 +120,42 @@ const PracticalImplementation = () => {
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
-                <Card className="border-2 border-dashed border-slate-300 hover:border-slate-400 transition-colors">
+                <Card className={`border-2 ${taskProgress.task1.aiCode ? 'border-green-300 bg-green-50' : 'border-dashed border-slate-300'} hover:border-slate-400 transition-colors`}>
                   <CardContent className="p-6 text-center">
-                    <Upload className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                    {taskProgress.task1.aiCode ? (
+                      <CheckCircle2 className="h-12 w-12 text-green-600 mx-auto mb-4" />
+                    ) : (
+                      <Upload className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                    )}
                     <h4 className="font-semibold text-slate-900 mb-2">AI-Generated Code</h4>
                     <p className="text-sm text-slate-600 mb-4">Upload your AI-assisted implementation</p>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleFileUpload('task1', 'aiCode')}
+                    >
                       <Github className="h-4 w-4 mr-2" />
-                      Upload Code
+                      {taskProgress.task1.aiCode ? 'Uploaded' : 'Upload Code'}
                     </Button>
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 border-dashed border-slate-300 hover:border-slate-400 transition-colors">
+                <Card className={`border-2 ${taskProgress.task1.manualCode ? 'border-green-300 bg-green-50' : 'border-dashed border-slate-300'} hover:border-slate-400 transition-colors`}>
                   <CardContent className="p-6 text-center">
-                    <Code className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                    {taskProgress.task1.manualCode ? (
+                      <CheckCircle2 className="h-12 w-12 text-green-600 mx-auto mb-4" />
+                    ) : (
+                      <Code className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                    )}
                     <h4 className="font-semibold text-slate-900 mb-2">Manual Implementation</h4>
                     <p className="text-sm text-slate-600 mb-4">Upload your manual code solution</p>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleFileUpload('task1', 'manualCode')}
+                    >
                       <Upload className="h-4 w-4 mr-2" />
-                      Upload Code
+                      {taskProgress.task1.manualCode ? 'Uploaded' : 'Upload Code'}
                     </Button>
                   </CardContent>
                 </Card>
@@ -171,7 +233,10 @@ const PracticalImplementation = () => {
                     <Play className="h-12 w-12 text-slate-400 mx-auto mb-4" />
                     <h4 className="font-semibold text-slate-900 mb-2">Run Test Suite</h4>
                     <p className="text-sm text-slate-600 mb-4">Execute your automated tests</p>
-                    <Button className="bg-purple-600 hover:bg-purple-700">
+                    <Button 
+                      className="bg-purple-600 hover:bg-purple-700"
+                      onClick={handleRunTests}
+                    >
                       <Play className="h-4 w-4 mr-2" />
                       Start Testing
                     </Button>
@@ -248,14 +313,22 @@ const PracticalImplementation = () => {
                 </Card>
               </div>
 
-              <Card className="border-2 border-dashed border-slate-300 hover:border-slate-400 transition-colors">
+              <Card className={`border-2 ${taskProgress.task3.notebook ? 'border-green-300 bg-green-50' : 'border-dashed border-slate-300'} hover:border-slate-400 transition-colors`}>
                 <CardContent className="p-6 text-center">
-                  <BarChart3 className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                  {taskProgress.task3.notebook ? (
+                    <CheckCircle2 className="h-12 w-12 text-green-600 mx-auto mb-4" />
+                  ) : (
+                    <BarChart3 className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                  )}
                   <h4 className="font-semibold text-slate-900 mb-2">Jupyter Notebook</h4>
                   <p className="text-sm text-slate-600 mb-4">Upload your complete analysis notebook</p>
-                  <Button variant="outline" size="sm">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleFileUpload('task3', 'notebook')}
+                  >
                     <Upload className="h-4 w-4 mr-2" />
-                    Upload Notebook
+                    {taskProgress.task3.notebook ? 'Uploaded' : 'Upload Notebook'}
                   </Button>
                 </CardContent>
               </Card>
@@ -280,11 +353,31 @@ const PracticalImplementation = () => {
               <p className="text-sm text-green-700">Complete all tasks to move to ethics section</p>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-green-600">1/3</div>
+              <div className="text-2xl font-bold text-green-600">
+                {Object.values(taskProgress).reduce((acc, task) => 
+                  acc + (Object.values(task).every(Boolean) ? 1 : 0), 0)}/3
+              </div>
               <div className="text-sm text-green-700">Tasks Complete</div>
             </div>
           </div>
-          <Progress value={33} className="mt-4 h-3" />
+          <Progress value={(Object.values(taskProgress).reduce((acc, task) => 
+            acc + (Object.values(task).every(Boolean) ? 1 : 0), 0) / 3) * 100} className="mt-4 h-3" />
+        </CardContent>
+      </Card>
+
+      {/* GitHub Integration */}
+      <Card className="bg-gradient-to-r from-slate-50 to-gray-50 border-slate-200">
+        <CardContent className="pt-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-semibold text-slate-900 mb-1">Code Repository</h4>
+              <p className="text-sm text-slate-600">Upload all your implementations to GitHub</p>
+            </div>
+            <Button onClick={handleGithubUpload} className="bg-slate-800 hover:bg-slate-900">
+              <Github className="h-4 w-4 mr-2" />
+              Create Repository
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -4,10 +4,89 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import { Upload, Github, FileText, Video, Users, Calendar, CheckCircle2, AlertCircle } from "lucide-react";
+import { Upload, Github, FileText, Video, Users, Calendar, CheckCircle2, AlertCircle, ExternalLink } from "lucide-react";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { Link } from "react-router-dom";
 
 const SubmissionGuidelines = () => {
-  const submissionProgress = 60; // This would be calculated based on completed components
+  const [submissionStatus, setSubmissionStatus] = useState({
+    code: false,
+    report: false,
+    video: false
+  });
+
+  const { toast } = useToast();
+
+  const submissionProgress = Object.values(submissionStatus).filter(Boolean).length * 33.33;
+
+  const handleCodeSubmission = () => {
+    window.open('https://github.com/new', '_blank');
+    setSubmissionStatus(prev => ({ ...prev, code: true }));
+    toast({
+      title: "GitHub Repository Created",
+      description: "Your code repository is ready for submission.",
+    });
+  };
+
+  const handleReportSubmission = () => {
+    // Simulate sharing as article
+    setSubmissionStatus(prev => ({ ...prev, report: true }));
+    toast({
+      title: "Report Shared Successfully",
+      description: "Your report has been published as an article.",
+    });
+  };
+
+  const handleVideoSubmission = () => {
+    // Simulate video recording
+    toast({
+      title: "Recording Started",
+      description: "Please record your 3-minute demo presentation.",
+    });
+    
+    setTimeout(() => {
+      setSubmissionStatus(prev => ({ ...prev, video: true }));
+      toast({
+        title: "Video Uploaded",
+        description: "Your presentation has been submitted successfully.",
+      });
+    }, 3000);
+  };
+
+  const handleFinalSubmission = () => {
+    const completedItems = Object.values(submissionStatus).filter(Boolean).length;
+    if (completedItems === 3) {
+      toast({
+        title: "Assignment Submitted Successfully!",
+        description: "All components have been submitted. Good luck!",
+      });
+    } else {
+      toast({
+        title: "Incomplete Submission",
+        description: `Please complete ${3 - completedItems} more component(s) before final submission.`,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handlePreviewSubmission = () => {
+    const savedAnswers = localStorage.getItem('theoreticalAnalysisAnswers');
+    const savedReflections = localStorage.getItem('ethicalReflections');
+    
+    if (savedAnswers || savedReflections) {
+      toast({
+        title: "Preview Available",
+        description: "Your saved responses are ready for review.",
+      });
+    } else {
+      toast({
+        title: "No Content to Preview",
+        description: "Please complete some sections first.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -31,24 +110,42 @@ const SubmissionGuidelines = () => {
           <div className="flex items-center justify-between">
             <CardTitle>Submission Progress</CardTitle>
             <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-              {submissionProgress}% Complete
+              {Math.round(submissionProgress)}% Complete
             </Badge>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <Progress value={submissionProgress} className="h-3" />
           <div className="grid sm:grid-cols-3 gap-4 text-center">
-            <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-              <CheckCircle2 className="h-6 w-6 text-green-600 mx-auto mb-2" />
-              <div className="text-sm font-medium text-green-900">Theory Complete</div>
+            <div className={`p-3 ${submissionStatus.code ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'} rounded-lg border`}>
+              {submissionStatus.code ? (
+                <CheckCircle2 className="h-6 w-6 text-green-600 mx-auto mb-2" />
+              ) : (
+                <AlertCircle className="h-6 w-6 text-yellow-600 mx-auto mb-2" />
+              )}
+              <div className={`text-sm font-medium ${submissionStatus.code ? 'text-green-900' : 'text-yellow-900'}`}>
+                {submissionStatus.code ? 'Code Submitted' : 'Code Pending'}
+              </div>
             </div>
-            <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-              <AlertCircle className="h-6 w-6 text-yellow-600 mx-auto mb-2" />
-              <div className="text-sm font-medium text-yellow-900">Practice In Progress</div>
+            <div className={`p-3 ${submissionStatus.report ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'} rounded-lg border`}>
+              {submissionStatus.report ? (
+                <CheckCircle2 className="h-6 w-6 text-green-600 mx-auto mb-2" />
+              ) : (
+                <AlertCircle className="h-6 w-6 text-yellow-600 mx-auto mb-2" />
+              )}
+              <div className={`text-sm font-medium ${submissionStatus.report ? 'text-green-900' : 'text-yellow-900'}`}>
+                {submissionStatus.report ? 'Report Submitted' : 'Report Pending'}
+              </div>
             </div>
-            <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-              <AlertCircle className="h-6 w-6 text-slate-400 mx-auto mb-2" />
-              <div className="text-sm font-medium text-slate-600">Ethics Pending</div>
+            <div className={`p-3 ${submissionStatus.video ? 'bg-green-50 border-green-200' : 'bg-slate-50 border-slate-200'} rounded-lg border`}>
+              {submissionStatus.video ? (
+                <CheckCircle2 className="h-6 w-6 text-green-600 mx-auto mb-2" />
+              ) : (
+                <AlertCircle className="h-6 w-6 text-slate-400 mx-auto mb-2" />
+              )}
+              <div className={`text-sm font-medium ${submissionStatus.video ? 'text-green-900' : 'text-slate-600'}`}>
+                {submissionStatus.video ? 'Video Submitted' : 'Video Pending'}
+              </div>
             </div>
           </div>
         </CardContent>
@@ -77,14 +174,26 @@ const SubmissionGuidelines = () => {
                 <li>• Performance benchmarks</li>
               </ul>
             </div>
-            <Button className="w-full bg-blue-600 hover:bg-blue-700">
+            <Button 
+              className="w-full bg-blue-600 hover:bg-blue-700"
+              onClick={handleCodeSubmission}
+            >
               <Github className="h-4 w-4 mr-2" />
               Submit to GitHub
             </Button>
             <div className="text-center">
-              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                <CheckCircle2 className="h-3 w-3 mr-1" />
-                Ready to Submit
+              <Badge variant="outline" className={submissionStatus.code ? "bg-green-50 text-green-700 border-green-200" : "bg-yellow-50 text-yellow-700 border-yellow-200"}>
+                {submissionStatus.code ? (
+                  <>
+                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                    Submitted
+                  </>
+                ) : (
+                  <>
+                    <AlertCircle className="h-3 w-3 mr-1" />
+                    Ready to Submit
+                  </>
+                )}
               </Badge>
             </div>
           </CardContent>
@@ -110,14 +219,26 @@ const SubmissionGuidelines = () => {
                 <li>• Performance metrics</li>
               </ul>
             </div>
-            <Button className="w-full bg-green-600 hover:bg-green-700">
+            <Button 
+              className="w-full bg-green-600 hover:bg-green-700"
+              onClick={handleReportSubmission}
+            >
               <FileText className="h-4 w-4 mr-2" />
               Share as Article
             </Button>
             <div className="text-center">
-              <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
-                <AlertCircle className="h-3 w-3 mr-1" />
-                In Progress
+              <Badge variant="outline" className={submissionStatus.report ? "bg-green-50 text-green-700 border-green-200" : "bg-yellow-50 text-yellow-700 border-yellow-200"}>
+                {submissionStatus.report ? (
+                  <>
+                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                    Submitted
+                  </>
+                ) : (
+                  <>
+                    <AlertCircle className="h-3 w-3 mr-1" />
+                    In Progress
+                  </>
+                )}
               </Badge>
             </div>
           </CardContent>
@@ -143,14 +264,26 @@ const SubmissionGuidelines = () => {
                 <li>• Key insights summary</li>
               </ul>
             </div>
-            <Button className="w-full bg-purple-600 hover:bg-purple-700">
+            <Button 
+              className="w-full bg-purple-600 hover:bg-purple-700"
+              onClick={handleVideoSubmission}
+            >
               <Video className="h-4 w-4 mr-2" />
               Record Demo
             </Button>
             <div className="text-center">
-              <Badge variant="outline" className="bg-slate-50 text-slate-600 border-slate-200">
-                <AlertCircle className="h-3 w-3 mr-1" />
-                Not Started
+              <Badge variant="outline" className={submissionStatus.video ? "bg-green-50 text-green-700 border-green-200" : "bg-slate-50 text-slate-600 border-slate-200"}>
+                {submissionStatus.video ? (
+                  <>
+                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                    Submitted
+                  </>
+                ) : (
+                  <>
+                    <AlertCircle className="h-3 w-3 mr-1" />
+                    Not Started
+                  </>
+                )}
               </Badge>
             </div>
           </CardContent>
@@ -169,7 +302,12 @@ const SubmissionGuidelines = () => {
               <Github className="h-12 w-12 text-slate-600 mx-auto mb-4" />
               <h4 className="font-semibold text-slate-900 mb-2">GitHub Repository</h4>
               <p className="text-sm text-slate-600 mb-4">Code, notebooks, and documentation</p>
-              <Button variant="outline" size="sm">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => window.open('https://github.com/new', '_blank')}
+              >
+                <ExternalLink className="h-4 w-4 mr-2" />
                 Create Repository
               </Button>
             </div>
@@ -178,16 +316,24 @@ const SubmissionGuidelines = () => {
               <Users className="h-12 w-12 text-slate-600 mx-auto mb-4" />
               <h4 className="font-semibold text-slate-900 mb-2">Community Platform</h4>
               <p className="text-sm text-slate-600 mb-4">Report as published article</p>
-              <Button variant="outline" size="sm">
-                Share Article
-              </Button>
+              <Link to="/community">
+                <Button variant="outline" size="sm">
+                  <Users className="h-4 w-4 mr-2" />
+                  Share Article
+                </Button>
+              </Link>
             </div>
             
             <div className="text-center p-6 bg-slate-50 rounded-lg border border-slate-200">
               <Video className="h-12 w-12 text-slate-600 mx-auto mb-4" />
               <h4 className="font-semibold text-slate-900 mb-2">Group Platform</h4>
               <p className="text-sm text-slate-600 mb-4">Video demo for peer review</p>
-              <Button variant="outline" size="sm">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => toast({ title: "Video Platform", description: "Redirecting to video submission platform..." })}
+              >
+                <ExternalLink className="h-4 w-4 mr-2" />
                 Upload Video
               </Button>
             </div>
@@ -219,17 +365,29 @@ const SubmissionGuidelines = () => {
 
       {/* Final Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-4">
-        <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700 flex-1">
+        <Button 
+          size="lg" 
+          className="bg-indigo-600 hover:bg-indigo-700 flex-1"
+          onClick={handleFinalSubmission}
+        >
           <Upload className="h-4 w-4 mr-2" />
           Submit Assignment
         </Button>
-        <Button variant="outline" size="lg" className="flex-1">
+        <Button 
+          variant="outline" 
+          size="lg" 
+          className="flex-1"
+          onClick={handlePreviewSubmission}
+        >
+          <FileText className="h-4 w-4 mr-2" />
           Preview Submission
         </Button>
-        <Button variant="outline" size="lg" className="flex-1">
-          <Users className="h-4 w-4 mr-2" />
-          Get Help
-        </Button>
+        <Link to="/community">
+          <Button variant="outline" size="lg" className="w-full">
+            <Users className="h-4 w-4 mr-2" />
+            Get Help
+          </Button>
+        </Link>
       </div>
     </div>
   );

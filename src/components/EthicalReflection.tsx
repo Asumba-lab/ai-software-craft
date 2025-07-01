@@ -4,8 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { Shield, AlertTriangle, Users, Scale, Lightbulb, FileText } from "lucide-react";
-import { useState } from "react";
+import { Shield, AlertTriangle, Users, Scale, Lightbulb, FileText, Save, Download } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const EthicalReflection = () => {
   const [reflections, setReflections] = useState({
@@ -14,9 +15,58 @@ const EthicalReflection = () => {
     bonusProposal: ""
   });
 
+  const { toast } = useToast();
+
   const handleReflectionChange = (field: string, value: string) => {
     setReflections(prev => ({ ...prev, [field]: value }));
   };
+
+  const handleSaveReflections = () => {
+    localStorage.setItem('ethicalReflections', JSON.stringify(reflections));
+    toast({
+      title: "Ethical Analysis Saved",
+      description: "Your reflections have been saved successfully.",
+    });
+  };
+
+  const handleExportReflection = () => {
+    const content = `
+ETHICAL REFLECTION - AI SOFTWARE ENGINEERING
+Generated on: ${new Date().toLocaleDateString()}
+
+POTENTIAL BIASES:
+${reflections.biases || 'No response provided'}
+
+FAIRNESS SOLUTIONS:
+${reflections.fairnessTools || 'No response provided'}
+
+BONUS PROPOSAL:
+${reflections.bonusProposal || 'No response provided'}
+    `;
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ethical-reflection.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    toast({
+      title: "Reflection Exported",
+      description: "Your ethical reflection has been exported as a text file.",
+    });
+  };
+
+  // Load saved reflections on component mount
+  useEffect(() => {
+    const savedReflections = localStorage.getItem('ethicalReflections');
+    if (savedReflections) {
+      setReflections(JSON.parse(savedReflections));
+    }
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -259,11 +309,21 @@ const EthicalReflection = () => {
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-4">
-        <Button size="lg" className="bg-purple-600 hover:bg-purple-700 flex-1">
-          <Shield className="h-4 w-4 mr-2" />
+        <Button 
+          size="lg" 
+          className="bg-purple-600 hover:bg-purple-700 flex-1"
+          onClick={handleSaveReflections}
+        >
+          <Save className="h-4 w-4 mr-2" />
           Save Ethical Analysis
         </Button>
-        <Button variant="outline" size="lg" className="flex-1">
+        <Button 
+          variant="outline" 
+          size="lg" 
+          className="flex-1"
+          onClick={handleExportReflection}
+        >
+          <Download className="h-4 w-4 mr-2" />
           Export Reflection
         </Button>
       </div>
