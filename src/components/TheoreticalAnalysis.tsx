@@ -3,8 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Brain, HelpCircle, BookOpen, FileText, CheckCircle2, ExternalLink } from "lucide-react";
+import { Brain, HelpCircle, BookOpen, FileText, CheckCircle2, ExternalLink, Save, Download } from "lucide-react";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import jsPDF from 'jspdf';
 
 const TheoreticalAnalysis = () => {
   const [answers, setAnswers] = useState({
@@ -14,9 +16,115 @@ const TheoreticalAnalysis = () => {
     caseStudy: ""
   });
 
+  const { toast } = useToast();
+
   const handleAnswerChange = (questionId: string, value: string) => {
     setAnswers(prev => ({ ...prev, [questionId]: value }));
   };
+
+  const handleSaveAnswers = () => {
+    // Save to localStorage
+    localStorage.setItem('theoreticalAnalysisAnswers', JSON.stringify(answers));
+    
+    toast({
+      title: "Answers Saved Successfully",
+      description: "Your responses have been saved and can be restored later.",
+    });
+  };
+
+  const handleExportToPDF = () => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.width;
+    const margin = 20;
+    const maxWidth = pageWidth - 2 * margin;
+    let yPosition = 30;
+
+    // Title
+    doc.setFontSize(20);
+    doc.setFont("helvetica", "bold");
+    doc.text("AI Software Engineering - Theoretical Analysis", margin, yPosition);
+    yPosition += 20;
+
+    // Date
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, margin, yPosition);
+    yPosition += 20;
+
+    // Question 1
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("Q1: AI-Driven Code Generation Tools", margin, yPosition);
+    yPosition += 10;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const q1Lines = doc.splitTextToSize(answers.q1 || "No answer provided", maxWidth);
+    doc.text(q1Lines, margin, yPosition);
+    yPosition += q1Lines.length * 5 + 10;
+
+    // Question 2
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("Q2: Supervised vs Unsupervised Learning", margin, yPosition);
+    yPosition += 10;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const q2Lines = doc.splitTextToSize(answers.q2 || "No answer provided", maxWidth);
+    doc.text(q2Lines, margin, yPosition);
+    yPosition += q2Lines.length * 5 + 10;
+
+    // Check if we need a new page
+    if (yPosition > 250) {
+      doc.addPage();
+      yPosition = 30;
+    }
+
+    // Question 3
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("Q3: Bias Mitigation in AI", margin, yPosition);
+    yPosition += 10;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const q3Lines = doc.splitTextToSize(answers.q3 || "No answer provided", maxWidth);
+    doc.text(q3Lines, margin, yPosition);
+    yPosition += q3Lines.length * 5 + 10;
+
+    // Case Study
+    if (yPosition > 200) {
+      doc.addPage();
+      yPosition = 30;
+    }
+
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("Case Study Analysis: AIOps Efficiency", margin, yPosition);
+    yPosition += 10;
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const caseStudyLines = doc.splitTextToSize(answers.caseStudy || "No answer provided", maxWidth);
+    doc.text(caseStudyLines, margin, yPosition);
+
+    // Save the PDF
+    doc.save('theoretical-analysis-answers.pdf');
+    
+    toast({
+      title: "PDF Export Complete",
+      description: "Your theoretical analysis has been exported successfully.",
+    });
+  };
+
+  // Load saved answers on component mount
+  useState(() => {
+    const savedAnswers = localStorage.getItem('theoreticalAnalysisAnswers');
+    if (savedAnswers) {
+      setAnswers(JSON.parse(savedAnswers));
+    }
+  });
 
   const articles = [
     {
@@ -220,10 +328,21 @@ const TheoreticalAnalysis = () => {
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-4">
-        <Button size="lg" className="bg-blue-600 hover:bg-blue-700 flex-1">
+        <Button 
+          size="lg" 
+          className="bg-blue-600 hover:bg-blue-700 flex-1"
+          onClick={handleSaveAnswers}
+        >
+          <Save className="h-4 w-4 mr-2" />
           Save Answers
         </Button>
-        <Button variant="outline" size="lg" className="flex-1">
+        <Button 
+          variant="outline" 
+          size="lg" 
+          className="flex-1"
+          onClick={handleExportToPDF}
+        >
+          <Download className="h-4 w-4 mr-2" />
           Export to PDF
         </Button>
       </div>
