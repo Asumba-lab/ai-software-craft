@@ -192,7 +192,18 @@ const TheoreticalAnalysis = () => {
               </div>
             </div>
             <Textarea
-              placeholder="Enter your answer here..."
+              placeholder="AI tools like GitHub Copilot accelerate development by providing real-time code suggestions, auto-completing functions, generating boilerplate code, and translating natural language descriptions into working code. They handle repetitive tasks, suggest APIs and libraries, and help developers work in unfamiliar languages or frameworks faster.
+                Key Limitations:
+
+                Code Quality Issues: Generated code may be inefficient, insecure, or poorly structured
+                Context Limitations: AI lacks deep understanding of project architecture and business logic
+                Debugging Complexity: Harder to troubleshoot code you didn't write from scratch
+                Security Vulnerabilities: May suggest outdated patterns or introduce security flaws
+                Over-reliance Risk: Can weaken fundamental coding skills and problem-solving abilities
+                Licensing Concerns: Potential copyright issues with training data
+                Limited Creativity: Struggles with novel algorithms or unique architectural decisions
+
+                While these tools significantly boost productivity for routine tasks, they work best as assistants rather than replacements for skilled developers who can review, validate, and integrate the generated code appropriately."
               value={answers.q1}
               onChange={(e) => handleAnswerChange("q1", e.target.value)}
               className="min-h-[120px] bg-white/80 backdrop-blur-sm"
@@ -215,7 +226,18 @@ const TheoreticalAnalysis = () => {
               </div>
             </div>
             <Textarea
-              placeholder="Enter your answer here..."
+              placeholder="Uses labeled datasets with known bugs and clean code examples to train models. The algorithm learns to identify patterns that distinguish buggy code from correct code.
+
+              Advantages: High accuracy when trained on quality datasets, can detect specific bug types it was trained on
+              Examples: Classification models that flag potential null pointer exceptions, memory leaks, or SQL injection vulnerabilities
+              Limitation: Requires extensive labeled training data and only finds bug types it has seen before
+
+              Unsupervised Learning for Bug Detection:
+              Analyzes code without pre-labeled examples, identifying anomalies or unusual patterns that might indicate bugs.
+
+              Advantages: Can discover novel bug types and doesn't require labeled training data
+              Examples: Clustering algorithms that identify code sections deviating from normal patterns, or anomaly detection for unusual execution flows
+              Limitations: Higher false positive rates, difficulty distinguishing between intentional unusual code and actual bugs"
               value={answers.q2}
               onChange={(e) => handleAnswerChange("q2", e.target.value)}
               className="min-h-[120px] bg-white/80 backdrop-blur-sm"
@@ -238,7 +260,18 @@ const TheoreticalAnalysis = () => {
               </div>
             </div>
             <Textarea
-              placeholder="Enter your answer here..."
+              placeholder="AI bias in UX personalization can create discriminatory experiences that exclude or disadvantage certain user groups, leading to unfair treatment based on demographics, behavior patterns, or other characteristics.
+              Key Problems Without Bias Mitigation:
+
+              Exclusionary Experiences: AI might show different product options, prices, or features based on perceived user demographics
+              Reinforcement of Stereotypes: Personalization algorithms can amplify existing societal biases, limiting opportunities for underrepresented groups
+              Echo Chambers: Users get trapped in narrow content bubbles that reinforce existing preferences without exposure to diversity
+              Accessibility Issues: Biased models may poorly serve users with disabilities or different interaction patterns
+
+              Business and Ethical Consequences:
+
+              Legal Risk: Discriminatory personalization can violate anti-discrimination laws
+              Lost Revenue: Excluding or poorly serving user segments reduces market reach"
               value={answers.q3}
               onChange={(e) => handleAnswerChange("q3", e.target.value)}
               className="min-h-[120px] bg-white/80 backdrop-blur-sm"
